@@ -1,10 +1,33 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import * as Joi from 'joi';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        INSTANCE_ID: Joi.string().required(),
+        RPS: Joi.number().required(),
+        RMQ_URL: Joi.string().required(),
+      }),
+    }),
+    ClientsModule.registerAsync([
+      {
+        name: 'processor',
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [configService.get<string>('RMQ_URL')],
+            queue: 'event',
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
+  ],
   providers: [AppService],
 })
 export class AppModule {}
