@@ -1,0 +1,68 @@
+services:
+  mongo:
+    container_name: event-mongo
+    image: mongo:8.0.3
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: masterj3y
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: vpncm
+    volumes:
+      - mongo-data:/data/db
+  rabbitmq:
+    container_name: event-rmq
+    image: rabbitmq:4.0.2-management-alpine
+    ports:
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+  redis:
+    image: redis/redis-stack:latest
+    container_name: event-redis-json
+    volumes:
+      - redis-data:/data
+    restart: always
+
+  event-agent-1:
+    depends_on:
+      - rabbitmq
+    container_name: event-agent-1
+    build:
+      context: ./events/
+      target: development
+    command: pnpm start:dev
+    env_file: ./events/.env
+    volumes:
+      - ./events/:/usr/app
+  event-agent-2:
+    depends_on:
+      - rabbitmq
+    container_name: event-agent-2
+    build:
+      context: ./events/
+      target: development
+    command: pnpm start:dev
+    env_file: ./events/.env
+    volumes:
+      - ./events/:/usr/app
+  processor:
+    depends_on:
+      - mongo
+      - rabbitmq
+      - redis
+    container_name: event-processor
+    build:
+      context: ./processor/
+      target: development
+    command: pnpm start:dev
+    env_file: ./processor/.env
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./processor/:/usr/app
+
+volumes:
+  mongo-data:
+  rabbitmq-data:
+  redis-data:
