@@ -2,6 +2,10 @@
 
 This repository contains the implementation of two microservices: `Agent` and `Process`. The `Agent` service sends events to the `Process` service, where events are processed and stored. This is a simplified implementation with no database, focusing on the event processing logic.
 
+## Important Note
+
+### Please ensure that the Processor service is running before starting instances of the Agent service.
+
 ## Overview
 
 1. **Agent Service**:
