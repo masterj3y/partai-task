@@ -1,0 +1,19 @@
+services:
+  processor:
+    build:
+      context: ./processor/
+      target: production
+    environment:
+      RMQ: amqp://rabbitmq:5672
+      MONGODB_URI: mongodb://masterj3y:password@mongo/events?authSource=admin
+      RMQ_URL: amqp://rabbitmq:5672
+    volumes: []
+
+  event-agent:
+    build:
+      context: ./events/
+      target: production
+    environment:
+      RPS: 5
+      RMQ_URL: amqp://rabbitmq:5672
+    volumes: []
