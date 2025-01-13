@@ -24,28 +24,6 @@ services:
       - redis-data:/data
     restart: always
 
-  event-agent-1:
-    depends_on:
-      - rabbitmq
-    container_name: event-agent-1
-    build:
-      context: ./events/
-      target: development
-    command: pnpm start:dev
-    env_file: ./events/.env
-    volumes:
-      - ./events/:/usr/app
-  event-agent-2:
-    depends_on:
-      - rabbitmq
-    container_name: event-agent-2
-    build:
-      context: ./events/
-      target: development
-    command: pnpm start:dev
-    env_file: ./events/.env
-    volumes:
-      - ./events/:/usr/app
   processor:
     depends_on:
       - mongo
@@ -61,6 +39,18 @@ services:
       - "3001:3001"
     volumes:
       - ./processor/:/usr/app
+
+  event-agent:
+    depends_on:
+      - rabbitmq
+      - processor
+    build:
+      context: ./events/
+      target: development
+    command: pnpm start:dev
+    env_file: ./events/.env
+    volumes:
+      - ./events/:/usr/app
 
 volumes:
   mongo-data:
