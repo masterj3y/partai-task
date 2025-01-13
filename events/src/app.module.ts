@@ -9,7 +9,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        INSTANCE_ID: Joi.string().required(),
         RPS: Joi.number().required(),
         RMQ_URL: Joi.string().required(),
       }),
@@ -22,6 +21,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           options: {
             urls: [configService.get<string>('RMQ_URL')],
             queue: 'event',
+            queueOptions: {
+              durable: true,
+            },
           },
         }),
         inject: [ConfigService],

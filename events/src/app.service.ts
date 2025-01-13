@@ -11,6 +11,7 @@ import { PressureProducer } from './producer/pressure.producer';
 import { VoltageProducer } from './producer/voltage.producer';
 import { LightIntensityProducer } from './producer/light-intensity.producer';
 import { NoiseProducer } from './producer/noise.producer';
+import * as os from 'os';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -23,7 +24,7 @@ export class AppService implements OnModuleInit {
     configService: ConfigService,
     @Inject('processor') private readonly processorClient: ClientProxy,
   ) {
-    this.instanceId = configService.get<string>('INSTANCE_ID');
+    this.instanceId = os.hostname();
     this.rps = configService.get<number>('RPS');
     this.randomNumberGenerator = new RandomNumberGenerator();
     this.producers = [
