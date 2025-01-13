@@ -7,8 +7,8 @@ This repository contains the implementation of two microservices: `Agent` and `P
 ### Please ensure that the Processor service is running before starting instances of the Agent service.
 
 ## Installation
-`docker compose up docker compose up mongo rabbitmq processor redis`
-`docker compose up -d --scale event-agent=3`
+- `docker compose up docker compose up mongo rabbitmq processor redis`
+- `docker compose up -d --scale event-agent=3`
 
 ## Overview
 
