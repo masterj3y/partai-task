@@ -18,6 +18,9 @@ async function bootstrap() {
     options: {
       urls: [configService.get<string>('RMQ_URL')],
       queue: 'event',
+      queueOptions: {
+        durable: true,
+      },
     },
   });
 
